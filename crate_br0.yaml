@@ -1,0 +1,11 @@
+- hosts: "{{ hosts }}"
+  gather_facts: true
+  gather_timeout: 10
+  roles:
+    - { role: network-br0 }
+  vars:
+    - network_name: ens33
+    - default_name: br0
+    - ip: 192.168.10.110
+    - prefix: 24
+    - gateway: 192.168.10.2
