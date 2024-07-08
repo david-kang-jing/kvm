@@ -1,0 +1,19 @@
+- name: modify network config
+  replace:
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ network_name }}
+    regexp: '^(.*)$' 
+    replace: '# \1'
+    backup: yes
+- name: write "{{ network_name }}" config 
+  blockinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ network_name }}
+    block: |
+      TYPE=Ethernet
+      BOOTPROTO=static
+      NAME={{ network_name }}
+      DEVICE={{ network_name }}
+      ONBOOT=yes
+      BRIDGE={{ default_name }}
+    marker: " " 
+    insertbefore: "^touch"
+    #backup: yes
