@@ -1,0 +1,21 @@
+- name: create "{{ default_name }}" file 
+  file:
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ default_name }}
+    state: touch
+    owner: root 
+    group: root
+    mode: 0644
+- name: insert config "{{ default_name }}"
+  blockinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ default_name }}
+    block: |
+      TYPE=Bridge
+      BOOTPROTO=static
+      NAME={{ default_name }}
+      DEVICE={{ default_name }}
+      ONBOOT=yes
+      IPADDR={{ ip }}
+      PREFIX={{ prefix }}
+      GATEWAY={{ gateway }}
+      DNS1=114.114.114.114
+    marker: " " 
