@@ -1,0 +1,12 @@
+- hosts: "{{ hosts }}"
+  gather_facts: true
+  gather_timeout: 10
+  roles:
+    - { role: kvm-install, tags: init_kvm, when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7" }
+    # - { role: network-br0, tags: br0_m, when: ansible_distribution_major_version == "7" } 
+    - { role: bridge-br0, tags: br0, when: ansible_distribution_major_version == "7" } 
+    - { role: copy-image, tags: copy-image }
+    - { role: create-kvm, tags: create-kvm }
+  vars:
+    - image_name: centos7.9.2009-15G
+    - instance_name: test-10

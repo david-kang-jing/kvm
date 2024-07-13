@@ -1,0 +1,19 @@
+- name: Install kvm  
+  yum:  
+    name:  
+      - qemu-kvm 
+      - qemu-img
+      - virt-manager
+      - libvirt
+      - libvirt-python 
+      - virt-manager
+      - libvirt-client
+      - virt-install
+      - bridge-utils
+    state: present
+- name: ebable libvirtd server
+  systemd:
+    state: started
+    enabled: yes
+    name: libvirtd 
+  when: ansible_service_mgr == 'systemd'

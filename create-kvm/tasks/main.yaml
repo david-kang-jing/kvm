@@ -1,0 +1,22 @@
+- name: debug clone_image
+  debug:
+    msg: "??????????????????"
+- name: check if instance_image exists
+  stat: 
+    path: /var/lib/libvirt/images/{{ image_name }}.qcow2
+  register: image_st
+  #failed_when: not image_st.stat.exists or instance_image.stat.islnk 
+
+- name: create "{{ instance_image }}"
+  block:
+    - name: undefine instance if exists 
+      virt:
+        name: "{{ instance_name }}"
+        command: undefine
+      ignore_errors: true
+- name: clone image
+  command: virt-clone --original-xml=/etc/libvirt/qemu/default.xml -n {{ instance_name }} -f /var/lib/libvirt/images/{{ instance_name }}.qcow2
+  register: clone_image
+- name: debug clone_image
+  debug:
+    msg: "{{ clone_image }}"

@@ -1,0 +1,17 @@
+- name: disable and stop NetworkManager
+  block:
+  - name: disable and stop NetworkManager (systemd)
+    systemd:
+      name: NetworkManager
+      enabled: no
+      state: stopped
+    when:
+      - ansible_service_mgr == 'systemd'
+- name: check bridge
+  block:
+  - name: check "{{ default_network }}" (centos 7)
+    shell: /usr/sbin/ifconfig {{ default_network }} 
+    when: ansible_distribution_major_version == "7" 
+  rescue:
+  - name: create "{{ default_network }}" 
+    shell: virsh iface-bridge {{ ansible_default_ipv4.interface }} {{ default_network }} --no-stp
