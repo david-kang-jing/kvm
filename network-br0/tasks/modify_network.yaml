@@ -1,17 +1,17 @@
 - name: modify network config
   replace:
-    path: /etc/sysconfig/network-scripts/ifcfg-{{ network_name }}
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
     regexp: '^(.*)$' 
     replace: '# \1'
     backup: yes
-- name: write "{{ network_name }}" config 
+- name: write "{{ ansible_default_ipv4.interface }}" config 
   blockinfile:
-    path: /etc/sysconfig/network-scripts/ifcfg-{{ network_name }}
+    path: /etc/sysconfig/network-scripts/ifcfg-{{ ansible_default_ipv4.interface }}
     block: |
       TYPE=Ethernet
       BOOTPROTO=static
-      NAME={{ network_name }}
-      DEVICE={{ network_name }}
+      NAME={{ ansible_default_ipv4.interface }}
+      DEVICE={{ ansible_default_ipv4.interface }}
       ONBOOT=yes
       BRIDGE={{ default_name }}
     marker: " " 
