@@ -1,5 +1,8 @@
 # 关于kvm的剧本
-目前只适用于centos7,相关判断条件是centos7
+目前安装kvm环境和网卡初始化肯能只适用cento7，其他环境未做测试
+痛点：
+  copy镜像的时候会比较慢，如果同机柜或者内网的话还能接受
+  需要提前制作一份centos7.9.2009-15G.qcow2镜像文件（镜像名可自定义）放到copy-image/files/下
 
 # 使用方法
 
@@ -8,7 +11,12 @@
 ```
   vars:
     - image_name: centos7.9.2009-15G   # 这个在copy-image时需要先上传到相关role的file中，是kvm克隆的源文件
-    - instance_name: test-10  # 克隆的目标主机的名称
+    - instance_name: test-10  # 实例的主机名
+    - instance_passwd: passwd # 实例的root密码
+    - cpu: 3                  # 实例cpu核心
+    - memory: 3G              # 实例的内存
+    - instance_ip: ip         # 实例的ip 
+    - instance_gw: 192.168.10.2 # 实例的网关
 ```
 
 
@@ -36,5 +44,18 @@ ansible-playbook -t copy-image -e "hosts=kvm" kvm.yaml
 ```
 ansible-playbook -t create-kvm -e "hosts=kvm" kvm.yaml
 
+```
+## 对虚拟机进行ip，主机名初始化
+```
+ansible-playbook -t init-vm -e "hosts=kvm" kvm.yaml
+```
+## 清理复制过去的镜像，xml文件和初始化脚本
+```
+ansible-playbook -t clean -e "hosts=kvm" kvm.yaml
+```
+
+## 可通过直接-e 指定变量安装
+```
+ansible-playbook  -e "hosts=kvm image_name=centos7.9.2009 instance_name=test-50 instance_passwd=redhat cpu=3 memory=3G instance_ip=192.168.10.50 instance_gw=192.168.10.2" kvm.yaml
 ```
 
