@@ -8,7 +8,7 @@
   register: default_xml
 - name: copy "{{ image_name }}" image
   copy:
-    src: "{{ image_name }}"
+    src: "{{ image_name }}.qcow2"
     dest: /var/lib/libvirt/images/{{ image_name }}.qcow2
   when: not image_st.stat.exists
 - name: copy default.xml config
