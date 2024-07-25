@@ -1,0 +1,14 @@
+- name: clean xml
+  file:
+    path: /etc/libvirt/qemu/default.xml
+    state: absent
+
+- name: clean {{ image_name }}.qcow2
+  file:
+    path: /var/lib/libvirt/images/{{ image_name }}.qcow2
+    state: absent
+
+- name: clean script
+  file: 
+    path: /tmp/set_hostname_ip.sh
+    state: absent

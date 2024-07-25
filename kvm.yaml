@@ -7,6 +7,13 @@
     - { role: bridge-br0, tags: br0, when: ansible_distribution_major_version == "7" } 
     - { role: copy-image, tags: copy-image }
     - { role: create-kvm, tags: create-kvm }
+    - { role: init-new-vm, tags: init-vm }
+    - { role: clean-kvm, tags: clean }
   vars:
-    - image_name: centos7.9.2009-15G
-    - instance_name: test-10
+    - image_name: centos7.9.2009 
+    - instance_name: test-55
+    - instance_passwd: redhat
+    - cpu: 2 
+    - memory: 1G
+    - instance_ip: 192.168.10.55
+    - instance_gw: 192.168.10.2

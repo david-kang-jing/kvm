@@ -1,0 +1,19 @@
+- name: template script
+  template:
+    src: set_hostname_ip.sh.j2
+    dest: /tmp/set_hostname_ip.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: virt-customize
+  command: virt-customize -a /var/lib/libvirt/images/{{ instance_name }}.qcow2 --run /tmp/set_hostname_ip.sh
+
+- name: set vm root passwd
+  command: virt-customize -a /var/lib/libvirt/images/{{ instance_name }}.qcow2 --root-password password:{{ instance_passwd }}
+
+- name: start {{ instance_name }}
+  virt: 
+    name: "{{ instance_name }}"
+    state: running
+    autostart: yes

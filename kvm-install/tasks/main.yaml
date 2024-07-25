@@ -10,6 +10,7 @@
       - libvirt-client
       - virt-install
       - bridge-utils
+      - libguestfs-tools
     state: present
 - name: ebable libvirtd server
   systemd:

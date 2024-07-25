@@ -1,6 +1,3 @@
-- name: debug clone_image
-  debug:
-    msg: "??????????????????"
 - name: check if instance_image exists
   stat: 
     path: /var/lib/libvirt/images/{{ image_name }}.qcow2
@@ -17,6 +14,45 @@
 - name: clone image
   command: virt-clone --original-xml=/etc/libvirt/qemu/default.xml -n {{ instance_name }} -f /var/lib/libvirt/images/{{ instance_name }}.qcow2
   register: clone_image
-- name: debug clone_image
-  debug:
-    msg: "{{ clone_image }}"
+
+
+#### set cpu and memory
+- name: set cpu
+  block:
+    - name: set cpu {{ instance_name }}.xml
+      replace:
+        path: /etc/libvirt/qemu/{{ instance_name }}.xml
+        #path: /tmp/{{ instance_name }}.xml
+        regexp: (<vcpu placement='static')(>\d+<)(/vcpu>)
+        replace: \1>{{ cpu }}<\3
+    - name: set cpu_topology {{ instance_name }}.xml
+      replace:
+        path: /etc/libvirt/qemu/{{ instance_name }}.xml
+        #path: /tmp/{{ instance_name }}.xml
+        regexp: (<topology sockets='1' cores=)('\d*')( threads='1'/>)
+        replace: \1'{{ cpu }}'\2
+      register: topology
+    - name: Insert cpu_topology
+      blockinfile:
+        path: /etc/libvirt/qemu/{{ instance_name }}.xml
+        #path: /tmp/{{ instance_name }}.xml
+        insertafter: "  </features>"
+        block: |
+            <cpu>
+              <topology sockets='1' cores='{{ cpu }}' threads='1'/>
+            </cpu>
+        marker: " "
+      when: topology.changed == false
+    - name: redefine instance
+      command: virsh define /etc/libvirt/qemu/{{ instance_name }}.xml
+    - name:  Start VM on host boot up      
+      command: virsh autostart {{ instance_name }} 
+  always:
+    - name: set max memory 
+      command: virsh setmaxmem {{ instance_name }} {{ memory }} 
+    - name: set current memory
+      command: virsh setmem {{ instance_name }} {{ memory }} --config
+
+
+
+

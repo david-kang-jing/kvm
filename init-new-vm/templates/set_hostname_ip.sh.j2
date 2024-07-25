@@ -1,0 +1,16 @@
+#!/bin/bash
+
+HOSTNAME={{ instance_name }}
+IP_FILE=/etc/sysconfig/network-scripts/ifcfg-eth0
+IP={{ instance_ip }}
+GW={{ instance_gw }}
+PREFIX=24
+
+
+main () {
+  echo "$HOSTNAME" >/etc/hostname
+  /usr/bin/sed -i.bak -r -e "s/(^IPADDR=)(.*)/\1$IP/" -e "s/(^PREFIX=)(.*)/\1$PREFIX/" -e "s/(^GATEWAY=)(.*)/\1$GW/" -e "s/(^ONBOOT=)(.*)/\1yes/" $IP_FILE
+}
+
+main
+
